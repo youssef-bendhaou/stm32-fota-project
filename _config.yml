@@ -1,0 +1,3 @@
+theme: minima
+title: STM32 FOTA Project
+description: Firmware Over-The-Air update system using STM32 and ESP32
