@@ -9,7 +9,7 @@ This project implements a **Firmware Over-The-Air (FOTA)** system that enables
 remote firmware updates for embedded systems.
 
 ## 🧠 System Architecture
-![Architecture](assets/images)
+![Architecture](assets/images/Screenshot%202025-12-15%20180800.png)
 
 
 ## 🔧 Technologies Used
