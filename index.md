@@ -9,7 +9,8 @@ This project implements a **Firmware Over-The-Air (FOTA)** system that enables
 remote firmware updates for embedded systems.
 
 ## 🧠 System Architecture
-![Architecture](assets/images/architecture.png)
+![Architecture](assets/images)
+
 
 ## 🔧 Technologies Used
 - **STM32** – Custom bootloader
