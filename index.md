@@ -5,10 +5,10 @@ title: STM32 FOTA Project
 # STM32 FOTA Project
 
 ## 📌 Overview
-This project demonstrates a robust **Firmware Over-The-Air (FOTA)** update mechanism for embedded systems.  
-It enables developers to remotely update the firmware of an STM32-based device through a cloud interface, eliminating the need for physical **ST-Link / JTAG** connections.
+This project presents a robust **Firmware Over-The-Air (FOTA)** update system for embedded devices.  
+It enables remote firmware updates on an STM32-based target via a cloud interface, removing the need for physical **ST-Link / JTAG** connections.
 
-The system is designed with reliability, safety, and scalability in mind, following real-world embedded and IoT constraints.
+The system is designed with **reliability, safety, and scalability** in mind, following real-world industrial constraints in embedded and IoT systems.
 
 <p align="center">
   <img src="assets/images/page1.png" width="400">
@@ -20,13 +20,13 @@ The system is designed with reliability, safety, and scalability in mind, follow
 The system follows a **Gateway–Node architecture**:
 
 1. **Management Console (Node-RED)**  
-   Provides a graphical dashboard where the user uploads the firmware `.bin` file and triggers the update via MQTT.
+   Provides a web-based dashboard where users upload the firmware `.bin` file and trigger updates using MQTT.
 
 2. **Connectivity Bridge (ESP32)**  
-   Acts as an internet gateway. It receives update commands, downloads the firmware in chunks, and forwards them to the STM32.
+   Acts as an internet gateway. It subscribes to update commands, downloads the firmware in chunks, and forwards them to the STM32.
 
 3. **Target Device (STM32)**  
-   Receives the firmware via UART, verifies its integrity, and writes it into internal Flash memory using a custom Bootloader.
+   Receives firmware data via UART, verifies its integrity, and programs it into internal Flash memory using a custom Bootloader.
 
 <p align="center">
   <img src="assets/images/arrr.png" width="700">
@@ -37,19 +37,19 @@ The system follows a **Gateway–Node architecture**:
 ## 🔧 Technical Deep Dive
 
 ### 1️⃣ Memory Mapping (STM32)
-The internal Flash memory is carefully partitioned to guarantee system stability and safe updates:
+The internal Flash memory is carefully partitioned to guarantee safe firmware updates and system stability:
 
 - **Sector 0 (0x0800 0000)**  
-  Bootloader – Startup code, command parser, and update decision logic.
+  Bootloader – Startup code, command decoding, and update decision logic.
 
 - **Sector 1 (0x0800 4000)**  
-  Bootloader – Flash erase/write routines, CRC verification, and jump-to-application logic.
+  Bootloader – Flash erase/write routines, CRC verification, and controlled jump to application.
 
 - **Application Area (from 0x0800 8000)**  
   Main user firmware.
 
 - **Flags / Metadata Section**  
-  Stores update status, firmware version, and integrity information.
+  Stores update status, firmware version, and integrity indicators.
 
 <p align="center">
   <img src="assets/images/flash_memory.png" width="200">
@@ -59,97 +59,99 @@ The internal Flash memory is carefully partitioned to guarantee system stability
 
 ---
 
-### 2️⃣ Update Process (State Machine)
+### 2️⃣ Firmware Update Process (State Machine)
 
 - **Idle** – Normal execution of the current application  
-- **Download** – ESP32 receives firmware chunks via MQTT/HTTP  
-- **Write** – STM32 enters Bootloader mode, erases application sectors, and writes new data  
+- **Download** – ESP32 receives firmware chunks via MQTT / HTTP  
+- **Write** – STM32 enters Bootloader mode, erases application sectors, and writes new firmware  
 - **Verification** – CRC-32 checksum validation  
 - **Jump** – Bootloader sets the MSP and jumps to the new application reset handler  
 
-This state-machine approach ensures deterministic behavior and prevents system corruption.
+This deterministic state-machine approach ensures safe execution and prevents system corruption.
 
 ---
 
 ## 🔁 Boot Process & Control Logic
-On every reset or power-up, the STM32 starts execution from the **Bootloader**.
+On every reset or power-up, the STM32 begins execution from the **Bootloader**.
 
 The Bootloader:
-1. Initializes minimal hardware (clock, UART).
+1. Initializes essential peripherals (clock, UART).
 2. Checks the update flag stored in Flash metadata.
 3. If an update is requested, validates and programs the new firmware.
 4. Otherwise, safely jumps to the existing application.
 
-This guarantees that the device always boots into a valid and functional state.
+This mechanism guarantees that the device always boots into a valid firmware image.
 
 ---
 
 ## 🛡️ Firmware Integrity & Safety Mechanisms
-To avoid bricking the device, multiple safety mechanisms were implemented:
+To avoid firmware corruption or device bricking, multiple safety mechanisms were implemented:
 
-- **CRC-32 verification** to detect corrupted firmware
-- **Header validation** before any Flash erase operation
-- **Fail-safe update logic** that preserves the Bootloader
-- **Controlled jump** with MSP and reset handler verification
+- **CRC-32 integrity verification**
+- **Firmware header validation** before Flash erase
+- **Fail-safe update logic** preserving the Bootloader
+- **Controlled application jump** with MSP and reset handler verification
 
-These protections ensure high reliability even in case of power loss or communication errors.
+These protections ensure high reliability even in case of power loss or communication failure.
 
 ---
 
-## 🌐 Communication Protocol & MQTT Topics
-The system uses **MQTT** for lightweight and scalable communication.
+## 🌐 Communication Protocol & MQTT Workflow
+The system uses **MQTT** for lightweight, scalable communication.
 
-**Data flow:**
+**Update flow:**
 1. Node-RED publishes an update command.
 2. ESP32 subscribes and downloads the firmware.
-3. Firmware chunks are sent to STM32 via UART.
-4. STM32 replies with ACK/NACK and progress updates.
+3. Firmware chunks are transmitted to STM32 via UART.
+4. STM32 responds with ACK/NACK and progress status.
 
 ---
 
 ## 🖥️ Node-RED Dashboard
-Node-RED provides a user-friendly interface with:
-- Firmware upload (.bin)
-- Update trigger button
-- Real-time progress display
+The Node-RED interface provides:
+- Firmware upload (`.bin`)
+- Update trigger control
+- Real-time progress visualization
 - Status feedback (Idle, Writing, Success, Error)
 
-This allows safe firmware deployment even by non-technical users.
+This allows secure firmware deployment even by non-technical users.
+
 <p align="center">
   <img src="assets/images/dashboard.png" width="700">
 </p>
+
 ---
 
 ## ⚙️ Technologies & Protocols
 
 | Component        | Technology                    | Role |
 |------------------|-------------------------------|------|
-| Microcontroller | STM32 (ARM Cortex-M)           | Main execution & Flash management |
-| Connectivity    | ESP32                          | Wi-Fi & MQTT stack |
+| Microcontroller | STM32 (ARM Cortex-M)           | Firmware execution & Flash management |
+| Connectivity    | ESP32                          | Wi-Fi & MQTT communication |
 | Cloud / UI      | Node-RED + MQTT Broker         | Firmware deployment dashboard |
 | Communication   | UART                           | ESP32 ↔ STM32 data transfer |
-| Language        | C (HAL / LL Drivers)           | Low-level firmware development |
+| Language        | C (HAL / LL Drivers)           | Low-level embedded firmware |
 
 ---
 
 ## ⚙️ Key Features
-- [x] **Custom Bootloader** with vector table relocation and safe jump  
-- [x] **Fail-safe Flash erasure** based on firmware validation  
-- [x] **Chunk-based transfer** supporting large firmware sizes  
-- [x] **Real-time update progress** via Node-RED dashboard  
+- [x] **Custom Bootloader** with vector table relocation and safe jump
+- [x] **Fail-safe Flash erase** based on firmware validation
+- [x] **Chunk-based firmware transfer** supporting large binaries
+- [x] **Real-time update monitoring** via Node-RED
 
 ---
 
 ## 📂 Source Code
-🔗 [GitHub Repository](https://github.com/yourusername/stm32-fota-project)
+🔗 [GitHub Repository](https://github.com/youssef-bendhaou/stm32-fota-project)
 
 ---
 
 ## 🚀 What I Learned
-- STM32 boot process and memory mapping
-- Bootloader design and Flash management
+- STM32 boot sequence and Flash memory architecture
+- Bootloader design and firmware update strategies
 - IoT communication using MQTT
-- End-to-end OTA system architecture
+- End-to-end OTA system implementation
 
 ---
 
@@ -158,11 +160,14 @@ This allows safe firmware deployment even by non-technical users.
   <img src="assets/images/perspective.png" width="700">
 </p>
 
+Planned improvements include:
+- Firmware encryption and authentication
+- Version control and compatibility checks
+- Rollback mechanism for failed updates
+
 ---
 
 ## 🏁 Conclusion
-This project provided hands-on experience in building a **real-world FOTA system**
-combining embedded firmware, IoT communication, and cloud-based management.
+This project provided hands-on experience in designing a **real-world FOTA system** combining embedded firmware, IoT communication, and cloud-based management.
 
-It reflects industrial constraints such as reliability, safety, and scalability,
-and represents a solid foundation for future work in **embedded systems and IoT engineering**.
+It reflects industrial requirements such as **reliability, safety, and scalability**, and forms a solid foundation for future work in **embedded systems and IoT engineering**.
