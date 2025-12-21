@@ -25,7 +25,7 @@ The system follows a **Gateway–Node architecture**:
    Receives the firmware via UART, verifies its integrity, and writes it into internal Flash memory using a custom Bootloader.
 
 <p align="center">
-  <img src="assets/images/arrr.png" width="200">
+  <img src="assets/images/arrr.png" width="700">
 </p>
 
 ---
