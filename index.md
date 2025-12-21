@@ -2,13 +2,15 @@
 title: STM32 FOTA Project
 ---
 
-# STM32 FOTA Project
 
 ## 📌 Overview
-This project implements a **Firmware Over-The-Air (FOTA)** system that enables
-remote firmware updates for embedded systems.
+This project demonstrates a robust Firmware Over-The-Air (FOTA) update mechanism. It allows developers to push new firmware binaries to a remote STM32 device via a cloud interface, eliminating the need for physical ST-Link/JTAG connections.
 
 ## 🧠 System Architecture
+The system follows a Gateway-Node architecture:
+  1/ Management Console (Node-RED): The user uploads the .bin file and sends an update trigger via MQTT.
+  2/ Connectivity Bridge (ESP32): Acts as the internet gateway. It downloads the binary in chunks and buffers them.
+  3/ Target Device (STM32): Receives the data via UART/SPI, verifies integrity, and writes it to the internal Flash memory using a custom Bootloader.
 ![Architecture](assets/images/page1.png)
 
 
