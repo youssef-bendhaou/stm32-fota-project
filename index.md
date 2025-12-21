@@ -11,7 +11,7 @@ The system follows a Gateway-Node architecture:
   1/ Management Console (Node-RED): The user uploads the .bin file and sends an update trigger via MQTT.
   2/ Connectivity Bridge (ESP32): Acts as the internet gateway. It downloads the binary in chunks and buffers them.
   3/ Target Device (STM32): Receives the data via UART/SPI, verifies integrity, and writes it to the internal Flash memory using a custom Bootloader.
-![Architecture](assets/images/page1.png)
+![Architecture](assets/images/arrr.png)
 
 
 ## 🔧 Technologies Used
