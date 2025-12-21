@@ -10,6 +10,10 @@ It enables developers to remotely update the firmware of an STM32-based device t
 
 The system is designed with reliability, safety, and scalability in mind, following real-world embedded and IoT constraints.
 
+<p align="center">
+  <img src="assets/images/page1.png" width="700">
+</p>
+
 ---
 
 ## 🧠 System Architecture
