@@ -25,7 +25,7 @@ The system follows a **Gateway–Node architecture**:
    Receives the firmware via UART, verifies its integrity, and writes it into internal Flash memory using a custom Bootloader.
 
 <p align="center">
-  <img src="assets/images/arrr.png" width="700">
+  <img src="assets/images/arrr.png" width="200">
 </p>
 
 ---
@@ -48,7 +48,7 @@ The internal Flash memory is carefully partitioned to guarantee system stability
   Stores update status, firmware version, and integrity information.
 
 <p align="center">
-  <img src="assets/images/flash_memory.png" width="700">
+  <img src="assets/images/flash_memory.png" width="200">
 </p>
 
 > ⚠️ The Bootloader region is protected and never overwritten during firmware updates.
@@ -149,7 +149,7 @@ This allows safe firmware deployment even by non-technical users.
 
 ---
 
-## 🔮 Future Improvements
+## 🔮 Future Developments
 <p align="center">
   <img src="assets/images/perspective.png" width="700">
 </p>
